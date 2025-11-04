@@ -5,16 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Penitipan;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $today = now();
-        $totalMotor = Penitipan::count();
-        $motorMasuk = Penitipan::whereDate('waktu_masuk', $today)->count();
-        $motorKeluar = Penitipan::whereDate('waktu_keluar', $today)->count();
+        $today = now()->startOfDay();
+
+        // SEMUA QUERY PAKAI ->own()
+        $totalMotor = Penitipan::own()->count();
+        $motorMasuk = Penitipan::own()->whereDate('waktu_masuk', $today)->count();
+        $motorKeluar = Penitipan::own()->whereDate('waktu_keluar', $today)->count();
 
         // Data Mingguan
         $labelsMinggu = [];
@@ -22,33 +23,26 @@ class DashboardController extends Controller
         $dataKeluarMinggu = [];
 
         for ($i = 6; $i >= 0; $i--) {
-            $day = now()->subDays($i);
-            $labelsMinggu[] = $day->translatedFormat('l'); // nama hari
+            $day = now()->subDays($i)->startOfDay();
+            $labelsMinggu[] = $day->translatedFormat('l');
 
-            $dataMasukMinggu[] = Penitipan::whereDate('waktu_masuk', $day)->count();
-            $dataKeluarMinggu[] = Penitipan::whereDate('waktu_keluar', $day)->count();
+            $dataMasukMinggu[] = Penitipan::own()->whereDate('waktu_masuk', $day)->count();
+            $dataKeluarMinggu[] = Penitipan::own()->whereDate('waktu_keluar', $day)->count();
         }
 
         $totalMasukMinggu = array_sum($dataMasukMinggu);
         $totalKeluarMinggu = array_sum($dataKeluarMinggu);
 
-        // Data Slot Penitipan
+        // Slot
         $totalSlot = 300;
-        $slotTerisi = Penitipan::where('status', 'aktif')->count();
+        $slotTerisi = Penitipan::own()->where('status', 'aktif')->count();
         $slotTersedia = $totalSlot - $slotTerisi;
 
         return view('dashboard.index', compact(
-            'motorMasuk',
-            'motorKeluar',
-            'totalMotor',
-            'labelsMinggu',
-            'dataMasukMinggu',
-            'dataKeluarMinggu',
-            'totalMasukMinggu',
-            'totalKeluarMinggu',
-            'totalSlot',
-            'slotTerisi',
-            'slotTersedia'
+            'motorMasuk', 'motorKeluar', 'totalMotor',
+            'labelsMinggu', 'dataMasukMinggu', 'dataKeluarMinggu',
+            'totalMasukMinggu', 'totalKeluarMinggu',
+            'totalSlot', 'slotTerisi', 'slotTersedia'
         ));
     }
 }

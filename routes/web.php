@@ -2,51 +2,60 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PenitipanController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\AdminController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
-Route::get('/', function () {
-    return view('welcome');
+// === GUEST ===
+Route::middleware('guest')->group(function () {
+    Route::get('/', fn() => redirect()->route('login'));
+    Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [AuthController::class, 'login']);
+    Route::get('register', [AuthController::class, 'showRegistrationForm'])->name('register');
+    Route::post('register', [AuthController::class, 'register']);
 });
 
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+// === AUTHENTICATED ===
+Route::middleware('auth')->group(function () {
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
-// Dashboard contoh
-// Route::middleware('auth')->group(function () {
-//     Route::get('/admin/dashboard', function () {
-//         return "Halaman Admin";
-//     })->name('admin.dashboard')->middleware('role:admin');
+    // === PETUGAS ===
+    Route::middleware('role:petugas')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-//     Route::get('/petugas/dashboard', function () {
-//         return "Halaman Petugas";
-//     })->name('petugas.dashboard')->middleware('role:petugas');
-// });
+        Route::prefix('penitipan')->name('penitipan.')->group(function () {
+            Route::get('/', [PenitipanController::class, 'index'])->name('index');
+            Route::get('/create', [PenitipanController::class, 'create'])->name('create');
+            Route::post('/store', [PenitipanController::class, 'store'])->name('store');
+            Route::get('/{id}', [PenitipanController::class, 'show'])->name('show');
+            Route::get('/{id}/edit', [PenitipanController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [PenitipanController::class, 'update'])->name('update');
+            Route::delete('/{id}', [PenitipanController::class, 'destroy'])->name('destroy');
+            Route::post('/{id}/keluar', [PenitipanController::class, 'keluar'])->name('keluar');
+            Route::get('/struk/{id}', [PenitipanController::class, 'struk'])->name('struk');
+        });
 
-Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.pdf');
+        Route::get('/laporan/excel', [LaporanController::class, 'exportExcel'])->name('laporan.excel');
+    });
 
-Route::get('/penitipan', [PenitipanController::class, 'index'])->name('penitipan.index');
-Route::get('/penitipan/{id}', [PenitipanController::class, 'show'])->name('penitipan.show');
-Route::get('/penitipan/create', [PenitipanController::class, 'create'])->name('penitipan.create');
-Route::get('/penitipan/{id}/edit', [PenitipanController::class, 'edit'])->name('penitipan.edit');
-Route::get('/penitipan/struk/{id}', [PenitipanController::class, 'struk'])->name('penitipan.struk');
-Route::put('/penitipan/{id}', [PenitipanController::class, 'update'])->name('penitipan.update');
-Route::post('/penitipan/store', [PenitipanController::class, 'store'])->name('penitipan.store');
-Route::post('/penitipan/keluar/{id}', [PenitipanController::class, 'keluar'])->name('penitipan.keluar');
-Route::delete('/penitipan/{id}', [PenitipanController::class, 'destroy'])->name('penitipan.destroy');
+    // === ADMIN ===
+    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
-Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
-Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.pdf');
-Route::get('/laporan/excel', [LaporanController::class, 'exportExcel'])->name('laporan.excel');
+        // Kelola Pengguna
+        Route::prefix('users')->name('users.')->group(function () {
+            Route::get('/', [AdminController::class, 'usersIndex'])->name('index');
+            Route::get('/create', [AdminController::class, 'usersCreate'])->name('create');
+            Route::post('/', [AdminController::class, 'usersStore'])->name('store');
+            Route::get('/{id}/edit', [AdminController::class, 'usersEdit'])->name('edit');
+            Route::put('/{id}', [AdminController::class, 'usersUpdate'])->name('update');
+            Route::delete('/{id}', [AdminController::class, 'usersDestroy'])->name('destroy');
+        });
+
+        // Admin bisa lihat semua penitipan (opsional)
+        Route::get('/penitipan', [PenitipanController::class, 'adminIndex'])->name('penitipan.all');
+    });
+});

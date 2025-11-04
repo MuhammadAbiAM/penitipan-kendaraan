@@ -34,7 +34,7 @@
                     <div class="card-body d-flex align-items-center">
                         <i class="fas fa-motorcycle fa-2x me-3"></i>
                         <div>
-                            <h6 class="mb-0">Total Motor Hari Ini</h6>
+                            <h6 class="mb-0">Total Motor masuk</h6>
                             <h3 class="fw-bold">{{ $totalMotor }}</h3>
                         </div>
                     </div>
@@ -55,7 +55,14 @@
                             <h3 class="fw-bold text-warning me-2">{{ $totalKeluarMinggu }}</h3>
                             <span class="text-muted">Total Keluar</span>
                         </div>
-                        <canvas id="grafikMingguan" height="150"></canvas>
+                        <canvas 
+                            id="grafikMingguan" 
+                            height="150" 
+                            {{-- Simpan data untuk grafik mingguan di sini --}}
+                            data-labels='@json($labelsMinggu ?? [])'
+                            data-masuk='@json($dataMasukMinggu ?? [])'
+                            data-keluar='@json($dataKeluarMinggu ?? [])'>
+                        </canvas>
                     </div>
                 </div>
             </div>
@@ -65,7 +72,15 @@
                 <div class="card shadow-sm border-0">
                     <div class="card-body text-center">
                         <h5 class="fw-bold mb-3">Slot Penitipan Motor</h5>
-                        <canvas id="grafikSlot" width="200" height="200" class="mb-3"></canvas>
+                        <canvas 
+                            id="grafikSlot" 
+                            width="200" 
+                            height="200" 
+                            class="mb-3"
+                            {{-- Simpan data untuk grafik slot di sini --}}
+                            data-terisi='@json($slotTerisi ?? 0)'
+                            data-tersedia='@json($slotTersedia ?? 0)'>
+                        </canvas>
                         <div class="d-flex justify-content-center">
                             <div class="me-4">
                                 <span class="badge bg-success me-1">&nbsp;</span> Slot Terisi: {{ $slotTerisi }}
@@ -83,54 +98,93 @@
 @endsection
 
 @section('scripts')
+    {{-- MENGGUNAKAN CDN CHART.JS YANG UMUM --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Grafik Mingguan
-        const ctx1 = document.getElementById('grafikMingguan').getContext('2d');
-        new Chart(ctx1, {
-            type: 'bar',
-            data: {
-                labels: {!! json_encode($labelsMinggu) !!},
-                datasets: [{
-                        label: 'Motor Masuk',
-                        data: {!! json_encode($dataMasukMinggu) !!},
-                        backgroundColor: 'rgba(54, 162, 235, 0.7)'
-                    },
-                    {
-                        label: 'Motor Keluar',
-                        data: {!! json_encode($dataKeluarMinggu) !!},
-                        backgroundColor: 'rgba(255, 206, 86, 0.7)'
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // --- FUNGSI UTAMA UNTUK MENGAMBIL KONTEKS CANVAS ---
+            function createChart(elementId, chartConfig) {
+                const canvas = document.getElementById(elementId);
+                // Pastikan elemen canvas ditemukan
+                if (canvas) {
+                    // Coba ambil konteks 2D
+                    const ctx = canvas.getContext('2d');
+                    if (ctx) {
+                        new Chart(ctx, chartConfig);
+                    } else {
+                        console.error('Failed to get 2D context for canvas ID:', elementId);
                     }
-                ]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
+                } else {
+                    console.error('Canvas element not found for ID:', elementId);
                 }
             }
-        });
+            // ----------------------------------------------------
 
-        // Grafik Slot Penitipan
-        const ctx2 = document.getElementById('grafikSlot').getContext('2d');
-        new Chart(ctx2, {
-            type: 'doughnut',
-            data: {
-                labels: ['Slot Terisi', 'Slot Tersedia'],
-                datasets: [{
-                    data: [{{ $slotTerisi }}, {{ $slotTersedia }}],
-                    backgroundColor: ['#28a745', '#ffc107']
-                }]
-            },
-            options: {
-                cutout: '70%',
-                plugins: {
-                    legend: {
-                        position: 'bottom'
+
+            // --- GRAFIK MINGGUAN ---
+            const canvasMingguan = document.getElementById('grafikMingguan');
+            if (canvasMingguan) {
+                // Ambil data dari atribut data- di elemen canvas
+                const labelsMinggu = JSON.parse(canvasMingguan.dataset.labels);
+                const dataMasukMinggu = JSON.parse(canvasMingguan.dataset.masuk);
+                const dataKeluarMinggu = JSON.parse(canvasMingguan.dataset.keluar);
+
+                createChart('grafikMingguan', {
+                    type: 'bar',
+                    data: {
+                        // Menggunakan variabel JS yang sudah dibaca dari DOM
+                        labels: labelsMinggu,
+                        datasets: [{
+                                label: 'Motor Masuk',
+                                data: dataMasukMinggu,
+                                backgroundColor: 'rgba(54, 162, 235, 0.7)'
+                            },
+                            {
+                                label: 'Motor Keluar',
+                                data: dataKeluarMinggu,
+                                backgroundColor: 'rgba(255, 206, 86, 0.7)'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { 
+                                beginAtZero: true
+                            }
+                        }
                     }
-                }
+                });
+            }
+
+
+            // --- GRAFIK SLOT PENITIPAN ---
+            const canvasSlot = document.getElementById('grafikSlot');
+            if (canvasSlot) {
+                // Ambil data dari atribut data- di elemen canvas
+                const slotTerisi = JSON.parse(canvasSlot.dataset.terisi);
+                const slotTersedia = JSON.parse(canvasSlot.dataset.tersedia);
+
+                createChart('grafikSlot', {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Slot Terisi', 'Slot Tersedia'],
+                        datasets: [{
+                            // Menggunakan variabel JS yang sudah dibaca dari DOM
+                            data: [slotTerisi, slotTersedia], 
+                            backgroundColor: ['#28a745', '#ffc107']
+                        }]
+                    },
+                    options: {
+                        cutout: '70%',
+                        plugins: {
+                            legend: {
+                                display: false 
+                            }
+                        }
+                    }
+                });
             }
         });
     </script>

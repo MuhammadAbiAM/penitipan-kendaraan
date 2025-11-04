@@ -13,55 +13,50 @@ class LaporanController extends Controller
 {
     public function index()
     {
-        $today = now()->toDateString();
+        $today = now()->startOfDay();
 
-        $totalMasuk = Penitipan::whereNotNull('waktu_masuk')->count();
-        $totalKeluar = Penitipan::whereNotNull('waktu_keluar')->count();
-        $totalPendapatan = Penitipan::sum('total_biaya');
-        $totalPendapatanHariIni = Penitipan::whereDate('waktu_keluar', $today)->sum('total_biaya');
-        $totalPendapatanBulanIni = Penitipan::whereYear('waktu_keluar', now()->year)
+        // SEMUA PAKAI own()
+        $totalMasuk = Penitipan::own()->whereNotNull('waktu_masuk')->count();
+        $totalKeluar = Penitipan::own()->whereNotNull('waktu_keluar')->count();
+        $totalPendapatan = Penitipan::own()->sum('total_biaya');
+        $totalPendapatanHariIni = Penitipan::own()
+            ->whereDate('waktu_keluar', $today)
+            ->sum('total_biaya');
+        $totalPendapatanBulanIni = Penitipan::own()
+            ->whereYear('waktu_keluar', now()->year)
             ->whereMonth('waktu_keluar', now()->month)
             ->sum('total_biaya');
 
-        // Data untuk grafik pendapatan bulanan
+        // Grafik 12 Bulan
         $labels = [];
         $data = [];
 
         for ($i = 11; $i >= 0; $i--) {
             $month = now()->subMonths($i);
-            $labels[] = $month->format('M Y');
+            $labels[] = $month->translatedFormat('M Y');
 
-            $data[] = Penitipan::whereYear('waktu_keluar', $month->year)
+            $data[] = Penitipan::own()
+                ->whereYear('waktu_keluar', $month->year)
                 ->whereMonth('waktu_keluar', $month->month)
                 ->sum('total_biaya');
         }
 
         return view('laporan.index', compact(
-            'totalMasuk',
-            'totalKeluar',
-            'totalPendapatan',
-            'totalPendapatanHariIni',
-            'totalPendapatanBulanIni',
-            'labels',
-            'data'
+            'totalMasuk', 'totalKeluar', 'totalPendapatan',
+            'totalPendapatanHariIni', 'totalPendapatanBulanIni',
+            'labels', 'data'
         ));
     }
 
-    /**
-     * Export laporan ke PDF
-     */
     public function exportPDF()
     {
-        $penitipan = Penitipan::whereNotNull('waktu_keluar')->get();
+        $penitipan = Penitipan::own()->whereNotNull('waktu_keluar')->get();
         $totalPendapatan = $penitipan->sum('total_biaya');
 
-        $pdf = PDF::loadView('laporan.pdf', compact('penitipan', 'totalPendapatan'));
+        $pdf = Pdf::loadView('laporan.pdf', compact('penitipan', 'totalPendapatan'));
         return $pdf->download('laporan_penitipan_' . now()->format('Ymd_His') . '.pdf');
     }
 
-    /**
-     * Export laporan ke Excel
-     */
     public function exportExcel()
     {
         return Excel::download(new LaporanExport, 'laporan_penitipan_' . now()->format('Ymd_His') . '.xlsx');

@@ -83,7 +83,8 @@
             </div>
             <div class="qr">
                 <p><strong>Scan QR</strong></p>
-                <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(120)->generate($penitipan->kode_struk)) !!}" alt="QR Code">
+                {!! QrCode::size(120)->generate($penitipan->kode_struk) !!}
+
             </div>
             <p style="margin-top:20px;">
                 Kode Struk: <strong>{{ $penitipan->kode_struk }}</strong>
