@@ -50,6 +50,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [AdminController::class, 'usersIndex'])->name('index');
             Route::get('/create', [AdminController::class, 'usersCreate'])->name('create');
             Route::post('/', [AdminController::class, 'usersStore'])->name('store');
+            Route::get('/{id}', [AdminController::class, 'usersShow'])->name('show');
             Route::get('/{id}/edit', [AdminController::class, 'usersEdit'])->name('edit');
             Route::put('/{id}', [AdminController::class, 'usersUpdate'])->name('update');
             Route::delete('/{id}', [AdminController::class, 'usersDestroy'])->name('destroy');

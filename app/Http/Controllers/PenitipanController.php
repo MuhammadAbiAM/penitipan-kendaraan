@@ -10,7 +10,6 @@ use Carbon\Carbon;
 
 class PenitipanController extends Controller
 {
-    // Menampilkan semua data penitipan
     public function index(Request $request)
     {
         $show = $request->input('show', 10);
@@ -36,13 +35,11 @@ class PenitipanController extends Controller
         return view('penitipan.index', compact('penitipan', 'show', 'sort', 'search'));
     }
 
-    // Form tambah penitipan (kendaraan masuk)
     public function create()
     {
         return view('penitipan.create');
     }
 
-    // Simpan penitipan baru
     public function store(Request $request)
     {
         $request->validate([
@@ -51,7 +48,6 @@ class PenitipanController extends Controller
             'warna'      => 'nullable|string|max:30',
         ]);
 
-        // Cek apakah plat nomor sudah ada dan masih aktif
         $plat = strtoupper($request->plat_nomor);
         $sudahAda = Penitipan::where('plat_nomor', $plat)
             ->where('status', 'aktif')
@@ -63,7 +59,6 @@ class PenitipanController extends Controller
                 ->withInput();
         }
 
-        // Simpan data baru
         Penitipan::create([
             'plat_nomor'    => $plat,
             'merek'         => $request->merek,
@@ -100,7 +95,6 @@ class PenitipanController extends Controller
 
         $penitipan = Penitipan::findOrFail($id);
 
-        // Cek plat nomor sama tapi beda id
         $plat = strtoupper($request->plat_nomor);
         $duplikat = Penitipan::where('plat_nomor', $plat)
             ->where('status', 'aktif')
@@ -134,16 +128,14 @@ class PenitipanController extends Controller
     {
         $penitipan = Penitipan::findOrFail($id);
 
-        // Hitung lama penitipan
         $waktuMasuk = Carbon::parse($penitipan->waktu_masuk);
         $waktuKeluar = Carbon::now();
         $durasiHari = $waktuMasuk->diffInDays($waktuKeluar);
-        if ($durasiHari == 0) $durasiHari = 1; // minimal 1 hari
+        if ($durasiHari == 0) $durasiHari = 1;
 
-        $tarif = 3000; // bisa diatur dinamis
+        $tarif = 3000;
         $biaya = $durasiHari * $tarif;
 
-        // Update status penitipan
         $penitipan->update([
             'waktu_keluar' => $waktuKeluar,
             'total_biaya' => $biaya,
@@ -154,7 +146,6 @@ class PenitipanController extends Controller
             ->with('success', 'Kendaraan sudah keluar!');
     }
 
-    // Cetak struk
     public function struk($id)
     {
         $penitipan = Penitipan::findOrFail($id);

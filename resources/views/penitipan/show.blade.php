@@ -3,6 +3,7 @@
 @section('content')
     <div class="container">
         <h3 class="fw-bold mb-1">Detail Penitipan</h3>
+        <p class="text-muted">{{ now()->translatedFormat('d F Y') }}</p>
 
         <div class="card mt-3">
             <div class="card-body">

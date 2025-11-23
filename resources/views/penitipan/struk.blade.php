@@ -93,7 +93,8 @@
     <div class="ticket">
 
         <div class="header">
-            <h2>PELABUHAN SDP – DINAS PERHUBUNGAN</h2>
+            <h2>PELABUHAN SDP</h2>
+            <h2>DINAS PERHUBUNGAN</h2>
             <h2>KABUPATEN CILACAP</h2>
             <div class="sub-title">Struk Penitipan Kendaraan</div>
         </div>

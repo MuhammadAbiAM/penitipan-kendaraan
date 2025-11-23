@@ -3,7 +3,7 @@
 @section('content')
     <div class="container">
         <h3 class="fw-bold mb-1 fs-3">Daftar Penitipan Motor</h3>
-        <p class="text-muted">{{ now()->translatedFormat('d F Y') }}</p>
+        <p class="text-muted mb-3">{{ now()->translatedFormat('d F Y') }}</p>
 
         {{-- Form Input Langsung --}}
         <div class="card mb-4 shadow-sm border-0 rounded-4">

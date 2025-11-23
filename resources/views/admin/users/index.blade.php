@@ -1,4 +1,3 @@
-{{-- resources/views/admin/users/index.blade.php --}}
 @extends('layouts.app')
 
 @section('title', 'Kelola Pengguna')
@@ -7,6 +6,15 @@
     <div class="container">
         <h3 class="fw-bold mb-1">Daftar Pengguna</h3>
         <p class="text-muted">{{ now()->translatedFormat('d F Y') }}</p>
+
+        <div class="mb-3">
+            <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i> Tambah Pengguna
+            </a>
+        </div>
+        <div class="mb-3">
+            {{ $users->links() }}
+        </div>
 
         {{-- Tabel Data --}}
         @if ($users->count() === 0)
@@ -39,12 +47,18 @@
                                     </span>
                                 </td>
                                 <td class="text-center">
+                                    <a href="{{ route('admin.users.show', $user->id) }}"
+                                        class="btn btn-outline-primary btn-sm rounded-circle" title="Detail">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+
                                     <a href="{{ route('admin.users.edit', $user->id) }}"
                                         class="btn btn-outline-warning btn-sm rounded-circle" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
+
                                     <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
-                                        class="d-inline" onsubmit="return confirm('Yakin ingin menghapus?');">
+                                        class="d-inline form-hapus">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button"

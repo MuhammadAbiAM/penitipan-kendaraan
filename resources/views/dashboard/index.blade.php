@@ -95,9 +95,7 @@
             // --- FUNGSI UTAMA UNTUK MENGAMBIL KONTEKS CANVAS ---
             function createChart(elementId, chartConfig) {
                 const canvas = document.getElementById(elementId);
-                // Pastikan elemen canvas ditemukan
                 if (canvas) {
-                    // Coba ambil konteks 2D
                     const ctx = canvas.getContext('2d');
                     if (ctx) {
                         new Chart(ctx, chartConfig);
@@ -114,7 +112,6 @@
             // --- GRAFIK MINGGUAN ---
             const canvasMingguan = document.getElementById('grafikMingguan');
             if (canvasMingguan) {
-                // Ambil data dari atribut data- di elemen canvas
                 const labelsMinggu = JSON.parse(canvasMingguan.dataset.labels);
                 const dataMasukMinggu = JSON.parse(canvasMingguan.dataset.masuk);
                 const dataKeluarMinggu = JSON.parse(canvasMingguan.dataset.keluar);
@@ -122,7 +119,6 @@
                 createChart('grafikMingguan', {
                     type: 'bar',
                     data: {
-                        // Menggunakan variabel JS yang sudah dibaca dari DOM
                         labels: labelsMinggu,
                         datasets: [{
                                 label: 'Motor Masuk',
@@ -151,7 +147,6 @@
             // --- GRAFIK SLOT PENITIPAN ---
             const canvasSlot = document.getElementById('grafikSlot');
             if (canvasSlot) {
-                // Ambil data dari atribut data- di elemen canvas
                 const slotTerisi = JSON.parse(canvasSlot.dataset.terisi);
                 const slotTersedia = JSON.parse(canvasSlot.dataset.tersedia);
 
@@ -160,7 +155,6 @@
                     data: {
                         labels: ['Slot Terisi', 'Slot Tersedia'],
                         datasets: [{
-                            // Menggunakan variabel JS yang sudah dibaca dari DOM
                             data: [slotTerisi, slotTersedia],
                             backgroundColor: ['#28a745', '#ffc107']
                         }]

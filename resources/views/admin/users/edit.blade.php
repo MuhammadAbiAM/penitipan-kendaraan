@@ -1,5 +1,4 @@
-{{-- resources/views/admin/users/edit.blade.php --}}
-@extends('layouts.app') {{-- GANTI DARI layouts.admin → layouts.app --}}
+@extends('layouts.app')
 
 @section('title', 'Edit Pengguna')
 
@@ -8,7 +7,6 @@
         <h3 class="fw-bold mb-1">Edit Pengguna</h3>
         <p class="text-muted">{{ now()->translatedFormat('d F Y') }}</p>
 
-        {{-- Card Form --}}
         <div class="card shadow-sm border-0 rounded-4">
             <div class="card-body">
                 <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
@@ -45,6 +43,16 @@
                     </div>
 
                     <div class="mb-3">
+                        <label class="form-label">Konfirmasi Password</label>
+                        <input type="password" name="password_confirmation"
+                            class="form-control @error('password_confirmation') is-invalid @enderror"
+                            placeholder="Konfirmasi password baru">
+                        @error('password_confirmation')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
                         <label class="form-label">Role</label>
                         <select name="role" class="form-select @error('role') is-invalid @enderror" required>
                             <option value="petugas" {{ old('role', $user->role) == 'petugas' ? 'selected' : '' }}>Petugas
@@ -58,12 +66,12 @@
                     </div>
 
                     <div class="d-flex gap-2">
-                        <a href="{{ route('admin.users.index') }}" class="btn btn-secondary rounded-3">
-                            <i class="fas fa-arrow-left me-1"></i> Kembali
-                        </a>
                         <button type="submit" class="btn btn-primary rounded-3">
                             <i class="fas fa-save me-1"></i> Update
                         </button>
+                        <a href="{{ route('admin.users.index') }}" class="btn btn-secondary rounded-3">
+                            <i class="fas fa-arrow-left me-1"></i> Kembali
+                        </a>
                     </div>
                 </form>
             </div>

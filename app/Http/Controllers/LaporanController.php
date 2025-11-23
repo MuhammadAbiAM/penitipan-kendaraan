@@ -15,7 +15,6 @@ class LaporanController extends Controller
     {
         $today = now()->startOfDay();
 
-        // SEMUA PAKAI own()
         $totalMasuk = Penitipan::whereNotNull('waktu_masuk')->count();
         $totalKeluar = Penitipan::whereNotNull('waktu_keluar')->count();
         $totalPendapatan = Penitipan::sum('total_biaya');
@@ -25,7 +24,6 @@ class LaporanController extends Controller
             ->whereMonth('waktu_keluar', now()->month)
             ->sum('total_biaya');
 
-        // Grafik 12 Bulan
         $labels = [];
         $data = [];
 

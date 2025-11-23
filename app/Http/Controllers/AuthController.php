@@ -17,16 +17,14 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'username' => 'required|string', // bisa username atau email
+            'username' => 'required|string',
             'password' => 'required|string',
         ]);
 
         $login = $request->username;
 
-        // Tentukan apakah input adalah email atau username
         $field = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
-        // Siapkan kredensial untuk Auth::attempt
         $credentials = [
             $field => $login,
             'password' => $request->password
@@ -59,14 +57,12 @@ class AuthController extends Controller
             'password' => 'required|string|min:6|confirmed',
         ]);
 
-        // Cek apakah username sudah ada
         if (User::where('username', $request->username)->exists()) {
             return back()->withErrors([
                 'username' => 'Username ini sudah digunakan. Silakan pilih username lain.'
             ])->withInput();
         }
 
-        // Cek apakah email sudah ada
         if (User::where('email', $request->email)->exists()) {
             return back()->withErrors([
                 'email' => 'Email ini sudah terdaftar. Gunakan email lain.'
@@ -77,7 +73,7 @@ class AuthController extends Controller
             'username' => $request->username,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'role'     => 'petugas', // HANYA PETUGAS!
+            'role'     => 'petugas',
         ]);
 
         return redirect()->route('login')

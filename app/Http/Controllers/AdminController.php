@@ -28,20 +28,38 @@ class AdminController extends Controller
     public function usersStore(Request $request)
     {
         $request->validate([
-            'username' => 'required|unique:users,username',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|min:6|confirmed',
+            'username' => 'required|string|max:255|regex:/^[A-Za-z0-9]+$/',
+            'email'    => 'required|email',
+            'password' => 'required|string|min:6|confirmed',
         ]);
+
+        if (User::where('username', $request->username)->exists()) {
+            return back()->withErrors([
+                'username' => 'Username ini sudah digunakan. Silakan pilih username lain.'
+            ])->withInput();
+        }
+
+        if (User::where('email', $request->email)->exists()) {
+            return back()->withErrors([
+                'email' => 'Email ini sudah terdaftar. Gunakan email lain.'
+            ])->withInput();
+        }
 
         User::create([
             'username' => $request->username,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'role'     => 'petugas',
+            'role'     => $request->role,
         ]);
 
         return redirect()->route('admin.users.index')
-            ->with('success', 'Petugas baru berhasil ditambahkan!');
+            ->with('success', 'Pengguna baru berhasil ditambahkan!');
+    }
+
+    public function usersShow($id)
+    {
+        $user = User::findOrFail($id);
+        return view('admin.users.show', compact('user'));
     }
 
     public function usersEdit($id)
@@ -55,12 +73,30 @@ class AdminController extends Controller
         $user = User::findOrFail($id);
 
         $request->validate([
-            'username' => 'required|unique:users,username,' . $id,
-            'email'    => 'required|email|unique:users,email,' . $id,
-            'password' => 'nullable|min:6|confirmed',
+            'username' => 'required|string|max:255|regex:/^[A-Za-z0-9]+$/',
+            'email'    => 'required|email',
+            'password' => 'nullable|string|min:6|confirmed',
         ]);
 
-        $data = $request->only(['username', 'email']);
+        if (User::where('username', $request->username)
+            ->where('id', '!=', $id)
+            ->exists()
+        ) {
+            return back()->withErrors([
+                'username' => 'Username ini sudah digunakan. Silakan pilih username lain.'
+            ])->withInput();
+        }
+
+        if (User::where('email', $request->email)
+            ->where('id', '!=', $id)
+            ->exists()
+        ) {
+            return back()->withErrors([
+                'email' => 'Email ini sudah terdaftar. Gunakan email lain.'
+            ])->withInput();
+        }
+
+        $data = $request->only(['username', 'email', 'role']);
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
         }
