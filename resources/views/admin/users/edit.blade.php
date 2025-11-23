@@ -35,21 +35,39 @@
                         <label class="form-label">
                             Password <small class="text-muted">(kosongkan jika tidak diubah)</small>
                         </label>
-                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
-                            placeholder="Masukkan password baru">
-                        @error('password')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <div class ="position-relative">
+                            <input id="password" type="password" name="password"
+                                class="form-control @error('password') is-invalid @enderror"
+                                placeholder="Masukkan password baru"
+                                oninput="checkPasswordInput('password', 'togglePasswordLogin')">
+
+                            <i id="togglePasswordLogin"
+                                class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-3"
+                                onclick="togglePassword('password', this)" style="cursor: pointer; display: none;">
+                            </i>
+                            @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Konfirmasi Password</label>
-                        <input type="password" name="password_confirmation"
-                            class="form-control @error('password_confirmation') is-invalid @enderror"
-                            placeholder="Konfirmasi password baru">
-                        @error('password_confirmation')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <div class="position-relative">
+                            <input id="password_confirmation" type="password" name="password_confirmation"
+                                class="form-control @error('password_confirmation') is-invalid @enderror"
+                                placeholder="Konfirmasi password baru"
+                                oninput="checkPasswordInput('password_confirmation', 'toggleRegConfirm')">
+
+                            <i id="toggleRegConfirm"
+                                class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-3"
+                                onclick="togglePassword('password_confirmation', this)"
+                                style="cursor: pointer; display: none;">
+                            </i>
+                            @error('password_confirmation')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
 
                     <div class="mb-3">
@@ -78,3 +96,30 @@
         </div>
     </div>
 @endsection
+
+<script>
+    function togglePassword(inputId, icon) {
+        const input = document.getElementById(inputId);
+
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove("bi-eye");
+            icon.classList.add("bi-eye-slash");
+        } else {
+            input.type = "password";
+            icon.classList.remove("bi-eye-slash");
+            icon.classList.add("bi-eye");
+        }
+    }
+
+    function checkPasswordInput(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+
+        if (input.value.length > 0) {
+            icon.style.display = "block";
+        } else {
+            icon.style.display = "none";
+        }
+    }
+</script>
