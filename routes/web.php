@@ -55,6 +55,5 @@ Route::middleware('auth')->group(function () {
             Route::put('/{id}', [AdminController::class, 'usersUpdate'])->name('update');
             Route::delete('/{id}', [AdminController::class, 'usersDestroy'])->name('destroy');
         });
-;
     });
 });
