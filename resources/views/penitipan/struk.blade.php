@@ -14,40 +14,30 @@
         }
 
         .ticket {
-            border: 1px solid #000;
-            padding: 20px;
-            width: 300px;
-            margin: 20px auto;
+            width: 230px;
+            padding: 12px;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.2;
             background: #fff;
+            margin: auto;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .header h2 {
             margin: 0;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .sub-title {
-            font-size: 14px;
+            font-size: 13px;
             margin-top: 4px;
-            margin-bottom: 30px;
-        }
-
-        .section-title {
-            font-weight: bold;
-            margin-bottom: 6px;
-            margin-top: 12px;
-            border-bottom: 1px solid #000;
-            padding-bottom: 3px;
-        }
-
-        .info p {
-            margin: 3px 0;
+            margin-bottom: 15px;
         }
 
         .info-row {
@@ -57,34 +47,54 @@
             margin: 3px 0;
         }
 
-        .row {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-        }
-
-        .left {
-            width: 60%;
+        .divider {
+            text-align: center;
+            font-size: 12px;
+            margin: 6px 0;
+            letter-spacing: 1px;
         }
 
         .qr-container {
             width: 100%;
             display: flex;
             justify-content: center;
-            margin-top: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .qr-box p {
+            margin: 0;
+        }
+
+        .qr-box hr {
+            margin: 3px 0;
+        }
+
+        .kode-struk {
+            margin-top: 2px;
+            margin-bottom: 0;
             text-align: center;
         }
 
         .footer {
             text-align: center;
             font-size: 11px;
-            margin-top: 18px;
+            margin-top: 10px;
         }
 
-        hr {
-            border: none;
-            border-top: 1px solid #000;
-            margin: 12px 0;
+        @media print {
+            body {
+                background: #fff !important;
+                margin: 0;
+                padding: 0;
+            }
+
+            .ticket {
+                margin: 0;
+                border: none !important;
+                width: 230px !important;
+                padding: 8px;
+            }
         }
     </style>
 </head>
@@ -99,8 +109,11 @@
             <div class="sub-title">Struk Penitipan Kendaraan</div>
         </div>
 
+        <div class="divider">----------------------------------------------</div>
+
         <div class="row">
             <div class="left">
+
                 <p class="info-row">
                     <span><strong>Tanggal:</strong></span>
                     <span>{{ now()->format('d-m-Y H:i') }}</span>
@@ -114,7 +127,8 @@
                 @endif
             </div>
         </div>
-        <hr>
+
+        <div class="divider">----------------------------------------------</div>
 
         <div class="row">
             <div class="left">
@@ -130,13 +144,13 @@
                     <span><strong>Waktu Keluar:</strong></span>
                     <span>
                         @if ($penitipan->waktu_keluar)
-                            {{ $penitipan->waktu_keluar ? \Carbon\Carbon::parse($penitipan->waktu_keluar)->format('d-m-Y H:i') : '-' }}
+                            {{ \Carbon\Carbon::parse($penitipan->waktu_keluar)->format('d-m-Y H:i') }}
                         @else
                             -
                         @endif
                     </span>
                 </p>
-                <div class="info-row" style="margin-top: 10px; font-size: 16px;">
+                <div class="info-row">
                     <strong>Total Bayar:</strong>
                     <span>
                         @if ($penitipan->status == 'selesai' && $penitipan->total_biaya)
@@ -150,21 +164,20 @@
         </div>
 
         <div class="qr-container">
-            <div>
-                <p><strong>QR Code</strong></p>
-                {!! QrCode::size(120)->generate($penitipan->kode_struk) !!}
-                <p style="margin-top: 8px; font-size: 12px;">
-                    <strong>{{ $penitipan->kode_struk }}</strong>
-                </p>
+            <div class="qr-box">
+                <p>{!! QrCode::size(100)->generate($penitipan->kode_struk) !!}</p>
+                <hr>
             </div>
         </div>
 
+        <p class="kode-struk">
+            <strong>{{ $penitipan->kode_struk }}</strong>
+        </p>
+
+        <div class="divider">----------------------------------------------</div>
 
         <div class="footer">
-            <hr>
             <p>Terima kasih telah menggunakan layanan penitipan kendaraan kami!</p>
-            {{-- <p>Harap simpan struk ini sebagai bukti resmi penitipan.</p>
-            <p>Kehilangan struk dapat menyulitkan proses pengambilan kendaraan.</p> --}}
         </div>
 
     </div>

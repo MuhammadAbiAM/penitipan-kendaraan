@@ -49,6 +49,7 @@ class PenitipanController extends Controller
         ]);
 
         $plat = strtoupper($request->plat_nomor);
+
         $sudahAda = Penitipan::where('plat_nomor', $plat)
             ->where('status', 'aktif')
             ->exists();
@@ -59,13 +60,16 @@ class PenitipanController extends Controller
                 ->withInput();
         }
 
+        $nextId = Penitipan::max('id') + 1;
+        $kodeStruk = 'SDP' . str_pad($nextId, 3, '0', STR_PAD_LEFT);
+
         Penitipan::create([
             'plat_nomor'    => $plat,
             'merek'         => $request->merek,
             'warna'         => $request->warna,
             'waktu_masuk'   => now(),
             'status'        => 'aktif',
-            'kode_struk'    => Str::uuid(),
+            'kode_struk'    => $kodeStruk,
             'user_id'       => Auth::id(),
         ]);
 
