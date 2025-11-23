@@ -8,11 +8,19 @@ use Illuminate\Support\Facades\Auth;
 class Penitipan extends Model
 {
     protected $table = 'penitipan';
+
     public $timestamps = false;
 
     protected $fillable = [
-        'plat_nomor', 'merek', 'warna', 'waktu_masuk', 'waktu_keluar',
-        'total_biaya', 'status', 'kode_struk', 'user_id'
+        'plat_nomor',
+        'merek',
+        'warna',
+        'waktu_masuk',
+        'waktu_keluar',
+        'total_biaya',
+        'status',
+        'kode_struk',
+        'user_id'
     ];
 
     public function scopeOwn($query)
@@ -21,5 +29,10 @@ class Penitipan extends Model
             return $query;
         }
         return $query->where('user_id', Auth::id());
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

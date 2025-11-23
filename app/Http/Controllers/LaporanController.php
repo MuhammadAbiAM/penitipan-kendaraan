@@ -16,14 +16,12 @@ class LaporanController extends Controller
         $today = now()->startOfDay();
 
         // SEMUA PAKAI own()
-        $totalMasuk = Penitipan::own()->whereNotNull('waktu_masuk')->count();
-        $totalKeluar = Penitipan::own()->whereNotNull('waktu_keluar')->count();
-        $totalPendapatan = Penitipan::own()->sum('total_biaya');
-        $totalPendapatanHariIni = Penitipan::own()
-            ->whereDate('waktu_keluar', $today)
+        $totalMasuk = Penitipan::whereNotNull('waktu_masuk')->count();
+        $totalKeluar = Penitipan::whereNotNull('waktu_keluar')->count();
+        $totalPendapatan = Penitipan::sum('total_biaya');
+        $totalPendapatanHariIni = Penitipan::whereDate('waktu_keluar', $today)
             ->sum('total_biaya');
-        $totalPendapatanBulanIni = Penitipan::own()
-            ->whereYear('waktu_keluar', now()->year)
+        $totalPendapatanBulanIni = Penitipan::whereYear('waktu_keluar', now()->year)
             ->whereMonth('waktu_keluar', now()->month)
             ->sum('total_biaya');
 
@@ -35,22 +33,25 @@ class LaporanController extends Controller
             $month = now()->subMonths($i);
             $labels[] = $month->translatedFormat('M Y');
 
-            $data[] = Penitipan::own()
-                ->whereYear('waktu_keluar', $month->year)
+            $data[] = Penitipan::whereYear('waktu_keluar', $month->year)
                 ->whereMonth('waktu_keluar', $month->month)
                 ->sum('total_biaya');
         }
 
         return view('laporan.index', compact(
-            'totalMasuk', 'totalKeluar', 'totalPendapatan',
-            'totalPendapatanHariIni', 'totalPendapatanBulanIni',
-            'labels', 'data'
+            'totalMasuk',
+            'totalKeluar',
+            'totalPendapatan',
+            'totalPendapatanHariIni',
+            'totalPendapatanBulanIni',
+            'labels',
+            'data'
         ));
     }
 
     public function exportPDF()
     {
-        $penitipan = Penitipan::own()->whereNotNull('waktu_keluar')->get();
+        $penitipan = Penitipan::whereNotNull('waktu_keluar')->get();
         $totalPendapatan = $penitipan->sum('total_biaya');
 
         $pdf = Pdf::loadView('laporan.pdf', compact('penitipan', 'totalPendapatan'));

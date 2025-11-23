@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - MotoKeep</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/title.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -20,17 +21,25 @@
 
         .left-side {
             background-color: #3b358b;
+            font-size: 18px;
             color: white;
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
             padding: 2rem;
+            position: relative;
         }
 
-        .left-side h2 {
-            font-weight: bold;
+        .left-text-wrapper {
+            margin-top: 110px;
+            text-align: center;
+        }
+
+        .left-side img {
+            position: absolute;
+            bottom: 0;
+            max-height: 400px;
         }
 
         .right-side {
@@ -74,16 +83,6 @@
             font-size: 20px;
             color: #3b358b;
         }
-
-        .role-info {
-            font-size: 0.9rem;
-            color: #6c757d;
-            margin-top: 1rem;
-            text-align: center;
-        }
-
-        .badge-admin { background-color: #dc3545; }
-        .badge-petugas { background-color: #0dcaf0; }
     </style>
 </head>
 
@@ -91,20 +90,23 @@
     <div class="login-container">
         <!-- Left side -->
         <div class="left-side">
-            <h2>Selamat Datang</h2>
-            <p>Catat Masuk, Hitung Keluar, Semua Otomatis.</p>
-            <img src="{{ asset('/storage/images/petugas-removebg-preview.png') }}" alt="Security" class="img-fluid mt-4" style="max-height:250px;">
+            <div class="left-text-wrapper">
+                <h2>Selamat Datang</h2>
+                <p>Catat Masuk, Hitung Keluar, Semua Otomatis.</p>
+            </div>
+            <img src="{{ asset('images/petugas.png') }}" alt="Security">
         </div>
+
 
         <!-- Right side -->
         <div class="right-side">
             <div class="login-card">
                 <div class="brand-logo mb-3">
-                    <img src="{{ asset('storage/images/motokeep-biru-removebg-preview.png') }}" alt="Logo" style="height:40px;">
-                    <span>MotoKeep</span>
+                    <img src="{{ asset('images/motokeep-biru.png') }}" alt="Logo" style="height:40px;">
                 </div>
                 <h4 class="mb-2">Log in</h4>
-                <p class="text-muted mb-4">Silakan login sesuai peran Anda.</p>
+                <p class="text-muted mb-4">Selamat Datang di Sistem Manajemen Parkir Motor, Silakan login untuk memulai.
+                </p>
 
                 <!-- PESAN ERROR -->
                 @if (session('error'))
@@ -118,9 +120,10 @@
                 <form action="{{ route('login') }}" method="POST">
                     @csrf
                     <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input id="username" type="text" name="username" class="form-control @error('username') is-invalid @enderror"
-                            placeholder="Masukkan username" value="{{ old('username') }}" required autofocus>
+                        <label for="username" class="form-label">Username/Email</label>
+                        <input id="username" type="text" name="username"
+                            class="form-control @error('username') is-invalid @enderror" placeholder=""
+                            value="{{ old('username') }}" required autofocus>
                         @error('username')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -128,8 +131,16 @@
 
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
-                        <input id="password" type="password" name="password" class="form-control @error('password') is-invalid @enderror"
-                            placeholder="Masukkan password" required>
+                        <div class="position-relative">
+                            <input id="password" type="password" name="password"
+                                class="form-control pe-5 @error('password') is-invalid @enderror" required
+                                oninput="checkPasswordInput('password', 'togglePasswordLogin')">
+
+                            <i id="togglePasswordLogin"
+                                class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-3"
+                                onclick="togglePassword('password', this)" style="cursor: pointer; display: none;">
+                            </i>
+                        </div>
                         @error('password')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -144,23 +155,43 @@
                             Log In
                         </button>
                         <a href="{{ route('register') }}" class="btn btn-outline-primary">
-                            Daftar Akun Baru
+                            Daftar Akun
                         </a>
                     </div>
                 </form>
-
-                <!-- INFO ROLE -->
-                <div class="role-info mt-4">
-                    <p class="mb-2"><strong>Pilih role saat registrasi:</strong></p>
-                    <span class="badge badge-admin me-2">Admin</span>
-                    <span class="badge badge-petugas">Petugas</span>
-                    <p class="mt-2 mb-0"><small>Admin: Kelola pengguna<br>Petugas: Input motor & hitung tarif</small></p>
-                </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function togglePassword(inputId, icon) {
+            const input = document.getElementById(inputId);
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("bi-eye");
+                icon.classList.add("bi-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("bi-eye-slash");
+                icon.classList.add("bi-eye");
+            }
+        }
+
+        function checkPasswordInput(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+
+            if (input.value.length > 0) {
+                icon.style.display = "block";
+            } else {
+                icon.style.display = "none";
+            }
+        }
+    </script>
+
 </body>
 
 </html>

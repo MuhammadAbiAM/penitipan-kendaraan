@@ -55,12 +55,8 @@
                             <h3 class="fw-bold text-warning me-2">{{ $totalKeluarMinggu }}</h3>
                             <span class="text-muted">Total Keluar</span>
                         </div>
-                        <canvas 
-                            id="grafikMingguan" 
-                            height="150" 
-                            {{-- Simpan data untuk grafik mingguan di sini --}}
-                            data-labels='@json($labelsMinggu ?? [])'
-                            data-masuk='@json($dataMasukMinggu ?? [])'
+                        <canvas id="grafikMingguan" height="150"
+                            data-labels='@json($labelsMinggu ?? [])' data-masuk='@json($dataMasukMinggu ?? [])'
                             data-keluar='@json($dataKeluarMinggu ?? [])'>
                         </canvas>
                     </div>
@@ -72,14 +68,8 @@
                 <div class="card shadow-sm border-0">
                     <div class="card-body text-center">
                         <h5 class="fw-bold mb-3">Slot Penitipan Motor</h5>
-                        <canvas 
-                            id="grafikSlot" 
-                            width="200" 
-                            height="200" 
-                            class="mb-3"
-                            {{-- Simpan data untuk grafik slot di sini --}}
-                            data-terisi='@json($slotTerisi ?? 0)'
-                            data-tersedia='@json($slotTersedia ?? 0)'>
+                        <canvas id="grafikSlot" width="200" height="200" class="mb-3"
+                            data-terisi='@json($slotTerisi ?? 0)' data-tersedia='@json($slotTersedia ?? 0)'>
                         </canvas>
                         <div class="d-flex justify-content-center">
                             <div class="me-4">
@@ -98,7 +88,6 @@
 @endsection
 
 @section('scripts')
-    {{-- MENGGUNAKAN CDN CHART.JS YANG UMUM --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -150,7 +139,7 @@
                     options: {
                         responsive: true,
                         scales: {
-                            y: { 
+                            y: {
                                 beginAtZero: true
                             }
                         }
@@ -172,7 +161,7 @@
                         labels: ['Slot Terisi', 'Slot Tersedia'],
                         datasets: [{
                             // Menggunakan variabel JS yang sudah dibaca dari DOM
-                            data: [slotTerisi, slotTersedia], 
+                            data: [slotTerisi, slotTersedia],
                             backgroundColor: ['#28a745', '#ffc107']
                         }]
                     },
@@ -180,7 +169,7 @@
                         cutout: '70%',
                         plugins: {
                             legend: {
-                                display: false 
+                                display: false
                             }
                         }
                     }

@@ -18,6 +18,7 @@ class PenitipanSeeder extends Seeder {
                 'total_biaya' => 15000,
                 'status' => 'selesai',
                 'kode_struk' => Str::uuid(),
+                'user_id' => 2,
             ],
             [
                 'plat_nomor' => 'R 5678 CD',
@@ -28,6 +29,7 @@ class PenitipanSeeder extends Seeder {
                 'total_biaya' => null,
                 'status' => 'aktif',
                 'kode_struk' => Str::uuid(),
+                'user_id' => 2,
             ]
         ]);
     }

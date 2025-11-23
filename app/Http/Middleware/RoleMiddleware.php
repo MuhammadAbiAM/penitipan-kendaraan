@@ -12,14 +12,18 @@ class RoleMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @param  string  $role
+     * @return mixed
      */
-    public function handle($request, Closure $next, $role)
+    public function handle(Request $request, Closure $next, $role)
     {
-        if (Auth::check() && Auth::user()->role === $role) {
-            return $next($request);
+        if (!Auth::check() || Auth::user()->role !== $role) {
+            Auth::logout();
+            return redirect()->route('login')->with('error', 'Akses ditolak. Role tidak sesuai.');
         }
 
-        abort(403, 'Akses ditolak.');
+        return $next($request);
     }
 }

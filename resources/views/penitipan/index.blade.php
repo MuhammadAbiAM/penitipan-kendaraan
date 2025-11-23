@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container">
-        <h3 class="fw-bold mb-1">Daftar Penitipan Motor</h3>
+        <h3 class="fw-bold mb-1 fs-3">Daftar Penitipan Motor</h3>
         <p class="text-muted">{{ now()->translatedFormat('d F Y') }}</p>
 
         {{-- Form Input Langsung --}}
@@ -27,7 +27,7 @@
                         </div>
                         <div class="col-md-3">
                             <button type="submit" class="btn btn-primary w-100 rounded-3">
-                                <i class="fas fa-plus-circle me-1"></i> Titip Motor
+                                <i class="fas fa-plus-circle me-1"></i> Titip
                             </button>
                         </div>
                     </div>
@@ -35,30 +35,16 @@
             </div>
         </div>
 
-        {{-- Flash Message --}}
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-
         {{-- Tabel Data --}}
         @if ($penitipan->isEmpty())
             <div class="alert alert-info shadow-sm rounded-3 text-center">Belum ada data penitipan motor.</div>
         @else
             {{-- Filter & Search --}}
             <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                <form method="GET" action="{{ route('penitipan.index') }}" class="d-flex gap-2">
+                <form method="GET" action="{{ route('penitipan.index') }}" class="d-flex gap-2 align-items-end">
                     <div class="d-flex align-items-center">
                         <label class="me-1 fw-semibold text-muted">Show</label>
-                        <select name="show" class="form-select form-select-sm rounded-3" onchange="this.form.submit()">
+                        <select name="show" class="form-select form-select-sm rounded-3 shadow-sm" onchange="this.form.submit()">
                             <option value="10" {{ $show == 10 ? 'selected' : '' }}>10</option>
                             <option value="25" {{ $show == 25 ? 'selected' : '' }}>25</option>
                             <option value="50" {{ $show == 50 ? 'selected' : '' }}>50</option>
@@ -66,7 +52,7 @@
                     </div>
 
                     <div>
-                        <select name="sort" class="form-select form-select-sm rounded-3" onchange="this.form.submit()">
+                        <select name="sort" class="form-select form-select-sm rounded-3 shadow-sm" onchange="this.form.submit()">
                             <option value="desc" {{ $sort == 'desc' ? 'selected' : '' }}>Terbaru</option>
                             <option value="asc" {{ $sort == 'asc' ? 'selected' : '' }}>Terlama</option>
                         </select>
@@ -74,11 +60,16 @@
                 </form>
 
                 {{-- Search modern --}}
-                <form method="GET" action="{{ route('penitipan.index') }}" class="d-flex" style="max-width: 300px;"
-                    id="searchForm">
-                    <div class="input-group rounded-3 shadow-sm">
-                        <input type="text" name="search" class="form-control border-0" placeholder="🔍 Cari..."
-                            value="{{ request('search') }}" id="searchInput">
+                <form method="GET" action="{{ route('penitipan.index') }}" class="w-full max-w-xs">
+                    <div class="flex items-center bg-gray-100 rounded-full h-10 px-4 shadow-inner">
+                        <svg class="w-4 h-4 text-indigo-600 mr-2" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z" />
+                        </svg>
+
+                        <input type="text" name="search" placeholder="Cari" value="{{ request('search') }}"
+                            class="w-full bg-transparent focus:outline-none text-indigo-700 placeholder-indigo-400">
                     </div>
                 </form>
             </div>
@@ -125,9 +116,10 @@
                                 <td class="text-center">
                                     @if ($p->status == 'aktif')
                                         <form action="{{ route('penitipan.keluar', $p->id) }}" method="POST"
-                                            class="d-inline">
+                                            class="d-inline form-keluar">
                                             @csrf
-                                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-circle"
+                                            <button type="button"
+                                                class="btn btn-outline-danger btn-sm rounded-circle btn-keluar"
                                                 title="Keluar">
                                                 <i class="fas fa-sign-out-alt"></i>
                                             </button>
@@ -150,17 +142,110 @@
                                     </a>
 
                                     <form action="{{ route('penitipan.destroy', $p->id) }}" method="POST"
-                                        class="d-inline" onsubmit="return confirm('Yakin ingin menghapus data ini?');">
+                                        class="d-inline form-hapus">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-circle"
-                                            title="Hapus">
+                                        <button type="button"
+                                            class="btn btn-outline-danger btn-sm rounded-circle btn-hapus" title="Hapus">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
                                 </td>
                             </tr>
                         @endforeach
+                        <script src="https://cdn.tailwindcss.com"></script>
+                        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function() {
+
+                                document.querySelectorAll('.btn-hapus').forEach(btn => {
+                                    btn.addEventListener('click', function() {
+                                        const form = this.closest('form');
+
+                                        Swal.fire({
+                                            title: 'Hapus Data?',
+                                            text: 'Data ini akan dihapus permanen.',
+                                            icon: 'warning',
+                                            showCancelButton: true,
+                                            confirmButtonColor: '#d33',
+                                            cancelButtonColor: '#6c757d',
+                                            confirmButtonText: 'Hapus',
+                                            cancelButtonText: 'Batal',
+                                            heightAuto: false,
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                Swal.fire({
+                                                    title: 'Menghapus...',
+                                                    text: 'Harap tunggu sebentar.',
+                                                    allowOutsideClick: false,
+                                                    allowEscapeKey: false,
+                                                    didOpen: () => Swal.showLoading()
+                                                });
+
+                                                form.submit();
+                                            }
+                                        });
+                                    });
+                                });
+
+                                document.querySelectorAll('.btn-keluar').forEach(btn => {
+                                    btn.addEventListener('click', function() {
+                                        const form = this.closest('form');
+
+                                        Swal.fire({
+                                            title: 'Motor Keluar?',
+                                            text: 'Pastikan data sudah benar.',
+                                            icon: 'question',
+                                            showCancelButton: true,
+                                            confirmButtonColor: '#0d6efd',
+                                            cancelButtonColor: '#6c757d',
+                                            confirmButtonText: 'Proses',
+                                            cancelButtonText: 'Batal',
+                                            heightAuto: false,
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                Swal.fire({
+                                                    title: 'Memproses...',
+                                                    text: 'Sedang menghitung biaya.',
+                                                    allowOutsideClick: false,
+                                                    allowEscapeKey: false,
+                                                    didOpen: () => Swal.showLoading()
+                                                });
+
+                                                form.submit();
+                                            }
+                                        });
+                                    });
+                                });
+
+                                @if (session('success'))
+                                    Swal.fire({
+                                        toast: true,
+                                        position: 'top-end',
+                                        icon: 'success',
+                                        title: "{{ session('success') }}",
+                                        showConfirmButton: false,
+                                        timer: 2500,
+                                        timerProgressBar: true,
+                                    });
+                                @endif
+
+                                @if (session('error'))
+                                    Swal.fire({
+                                        toast: true,
+                                        position: 'top-end',
+                                        icon: 'error',
+                                        title: "{{ session('error') }}",
+                                        showConfirmButton: false,
+                                        timer: 2500,
+                                        timerProgressBar: true,
+                                    });
+                                @endif
+
+                            });
+                        </script>
+
                     </tbody>
                 </table>
             </div>

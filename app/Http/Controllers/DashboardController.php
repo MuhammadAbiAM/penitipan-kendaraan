@@ -12,10 +12,9 @@ class DashboardController extends Controller
     {
         $today = now()->startOfDay();
 
-        // SEMUA QUERY PAKAI ->own()
-        $totalMotor = Penitipan::own()->count();
-        $motorMasuk = Penitipan::own()->whereDate('waktu_masuk', $today)->count();
-        $motorKeluar = Penitipan::own()->whereDate('waktu_keluar', $today)->count();
+        $totalMotor = Penitipan::count();
+        $motorMasuk = Penitipan::whereDate('waktu_masuk', $today)->count();
+        $motorKeluar = Penitipan::whereDate('waktu_keluar', $today)->count();
 
         // Data Mingguan
         $labelsMinggu = [];
@@ -26,8 +25,8 @@ class DashboardController extends Controller
             $day = now()->subDays($i)->startOfDay();
             $labelsMinggu[] = $day->translatedFormat('l');
 
-            $dataMasukMinggu[] = Penitipan::own()->whereDate('waktu_masuk', $day)->count();
-            $dataKeluarMinggu[] = Penitipan::own()->whereDate('waktu_keluar', $day)->count();
+            $dataMasukMinggu[] = Penitipan::whereDate('waktu_masuk', $day)->count();
+            $dataKeluarMinggu[] = Penitipan::whereDate('waktu_keluar', $day)->count();
         }
 
         $totalMasukMinggu = array_sum($dataMasukMinggu);
@@ -35,14 +34,21 @@ class DashboardController extends Controller
 
         // Slot
         $totalSlot = 300;
-        $slotTerisi = Penitipan::own()->where('status', 'aktif')->count();
+        $slotTerisi = Penitipan::where('status', 'aktif')->count();
         $slotTersedia = $totalSlot - $slotTerisi;
 
         return view('dashboard.index', compact(
-            'motorMasuk', 'motorKeluar', 'totalMotor',
-            'labelsMinggu', 'dataMasukMinggu', 'dataKeluarMinggu',
-            'totalMasukMinggu', 'totalKeluarMinggu',
-            'totalSlot', 'slotTerisi', 'slotTersedia'
+            'motorMasuk',
+            'motorKeluar',
+            'totalMotor',
+            'labelsMinggu',
+            'dataMasukMinggu',
+            'dataKeluarMinggu',
+            'totalMasukMinggu',
+            'totalKeluarMinggu',
+            'totalSlot',
+            'slotTerisi',
+            'slotTersedia'
         ));
     }
 }

@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('penitipan', function (Blueprint $table) {
             $table->id();
-            $table->string('plat_nomor');
+            $table->string('plat_nomor')->unique();
             $table->string('merek')->nullable();
             $table->string('warna')->nullable();
             $table->dateTime('waktu_masuk')->default(now());
@@ -17,6 +17,11 @@ return new class extends Migration {
             $table->decimal('total_biaya', 10, 2)->nullable();
             $table->enum('status', ['aktif', 'selesai'])->default('aktif');
             $table->string('kode_struk')->unique();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('set null');
         });
     }
 

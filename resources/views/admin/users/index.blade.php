@@ -8,22 +8,6 @@
         <h3 class="fw-bold mb-1">Daftar Pengguna</h3>
         <p class="text-muted">{{ now()->translatedFormat('d F Y') }}</p>
 
-       
-
-        {{-- Flash Message --}}
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-
         {{-- Tabel Data --}}
         @if ($users->count() === 0)
             <div class="alert alert-info shadow-sm rounded-3 text-center">
@@ -44,7 +28,6 @@
                     <tbody>
                         @foreach ($users as $user)
                             <tr class="text-center">
-                                {{-- NOMOR URUT PAGINATION BENAR --}}
                                 <td>
                                     {{ $loop->iteration + ($users->currentPage() - 1) * $users->perPage() }}
                                 </td>
@@ -64,19 +47,79 @@
                                         class="d-inline" onsubmit="return confirm('Yakin ingin menghapus?');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-circle"
-                                            title="Hapus">
+                                        <button type="button"
+                                            class="btn btn-outline-danger btn-sm rounded-circle btn-hapus" title="Hapus">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
                                 </td>
                             </tr>
                         @endforeach
+                        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function() {
+
+                                document.querySelectorAll('.btn-hapus').forEach(btn => {
+                                    btn.addEventListener('click', function() {
+                                        const form = this.closest('form');
+
+                                        Swal.fire({
+                                            title: 'Hapus Data?',
+                                            text: 'Data ini akan dihapus permanen.',
+                                            icon: 'warning',
+                                            showCancelButton: true,
+                                            confirmButtonColor: '#d33',
+                                            cancelButtonColor: '#6c757d',
+                                            confirmButtonText: 'Hapus',
+                                            cancelButtonText: 'Batal',
+                                            heightAuto: false,
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                Swal.fire({
+                                                    title: 'Menghapus...',
+                                                    text: 'Harap tunggu sebentar.',
+                                                    allowOutsideClick: false,
+                                                    allowEscapeKey: false,
+                                                    didOpen: () => Swal.showLoading()
+                                                });
+
+                                                form.submit();
+                                            }
+                                        });
+                                    });
+                                });
+
+                                @if (session('success'))
+                                    Swal.fire({
+                                        toast: true,
+                                        position: 'top-end',
+                                        icon: 'success',
+                                        title: "{{ session('success') }}",
+                                        showConfirmButton: false,
+                                        timer: 2500,
+                                        timerProgressBar: true,
+                                    });
+                                @endif
+
+                                @if (session('error'))
+                                    Swal.fire({
+                                        toast: true,
+                                        position: 'top-end',
+                                        icon: 'error',
+                                        title: "{{ session('error') }}",
+                                        showConfirmButton: false,
+                                        timer: 2500,
+                                        timerProgressBar: true,
+                                    });
+                                @endif
+
+                            });
+                        </script>
                     </tbody>
                 </table>
             </div>
 
-            {{-- Footer + Pagination --}}
             <div class="d-flex justify-content-between mt-3 align-items-center">
                 <div class="text-muted small">
                     Menampilkan {{ $users->firstItem() }} - {{ $users->lastItem() }} dari {{ $users->total() }} data

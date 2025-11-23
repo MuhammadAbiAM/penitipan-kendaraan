@@ -18,7 +18,13 @@ class LaporanExport implements FromCollection, WithHeadings
     public function headings(): array
     {
         return [
-            'Plat Nomor', 'Merek', 'Warna', 'Waktu Masuk', 'Waktu Keluar', 'Total Biaya', 'Status'
+            'Plat Nomor',
+            'Merek',
+            'Warna',
+            'Waktu Masuk',
+            'Waktu Keluar',
+            'Total Biaya',
+            'Status'
         ];
     }
 }

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -16,10 +16,21 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'username' => 'required|string',
+        $request->validate([
+            'username' => 'required|string', // bisa username atau email
             'password' => 'required|string',
         ]);
+
+        $login = $request->username;
+
+        // Tentukan apakah input adalah email atau username
+        $field = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+        // Siapkan kredensial untuk Auth::attempt
+        $credentials = [
+            $field => $login,
+            'password' => $request->password
+        ];
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
@@ -30,7 +41,9 @@ class AuthController extends Controller
             return redirect()->route('dashboard');
         }
 
-        return back()->withErrors(['username' => 'Username atau password salah.']);
+        return back()->withErrors([
+            'username' => 'Username/email atau password salah.'
+        ])->withInput();
     }
 
     public function showRegistrationForm()
@@ -41,10 +54,24 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'username' => 'required|string|max:255|unique:users',
-            'email'    => 'required|email|unique:users',
+            'username' => 'required|string|max:255|regex:/^[A-Za-z0-9]+$/',
+            'email'    => 'required|email',
             'password' => 'required|string|min:6|confirmed',
         ]);
+
+        // Cek apakah username sudah ada
+        if (User::where('username', $request->username)->exists()) {
+            return back()->withErrors([
+                'username' => 'Username ini sudah digunakan. Silakan pilih username lain.'
+            ])->withInput();
+        }
+
+        // Cek apakah email sudah ada
+        if (User::where('email', $request->email)->exists()) {
+            return back()->withErrors([
+                'email' => 'Email ini sudah terdaftar. Gunakan email lain.'
+            ])->withInput();
+        }
 
         User::create([
             'username' => $request->username,

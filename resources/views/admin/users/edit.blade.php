@@ -18,7 +18,7 @@
                     <div class="mb-3">
                         <label class="form-label">Username</label>
                         <input type="text" name="username" class="form-control @error('username') is-invalid @enderror"
-                               value="{{ old('username', $user->username) }}" required>
+                            value="{{ old('username', $user->username) }}" required>
                         @error('username')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -27,7 +27,7 @@
                     <div class="mb-3">
                         <label class="form-label">Email</label>
                         <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                               value="{{ old('email', $user->email) }}" required>
+                            value="{{ old('email', $user->email) }}" required>
                         @error('email')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -38,7 +38,7 @@
                             Password <small class="text-muted">(kosongkan jika tidak diubah)</small>
                         </label>
                         <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
-                               placeholder="Masukkan password baru">
+                            placeholder="Masukkan password baru">
                         @error('password')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -47,8 +47,10 @@
                     <div class="mb-3">
                         <label class="form-label">Role</label>
                         <select name="role" class="form-select @error('role') is-invalid @enderror" required>
-                            <option value="petugas" {{ old('role', $user->role) == 'petugas' ? 'selected' : '' }}>Petugas</option>
-                            <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Admin</option>
+                            <option value="petugas" {{ old('role', $user->role) == 'petugas' ? 'selected' : '' }}>Petugas
+                            </option>
+                            <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Admin
+                            </option>
                         </select>
                         @error('role')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -56,12 +58,12 @@
                     </div>
 
                     <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary rounded-3">
-                            <i class="fas fa-save me-1"></i> Update
-                        </button>
                         <a href="{{ route('admin.users.index') }}" class="btn btn-secondary rounded-3">
                             <i class="fas fa-arrow-left me-1"></i> Kembali
                         </a>
+                        <button type="submit" class="btn btn-primary rounded-3">
+                            <i class="fas fa-save me-1"></i> Update
+                        </button>
                     </div>
                 </form>
             </div>
