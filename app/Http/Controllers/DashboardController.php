@@ -33,7 +33,7 @@ class DashboardController extends Controller
         $totalKeluarMinggu = array_sum($dataKeluarMinggu);
 
         // Slot
-        $totalSlot = 300;
+        $totalSlot = 100;
         $slotTerisi = Penitipan::where('status', 'aktif')->count();
         $slotTersedia = $totalSlot - $slotTerisi;
 
