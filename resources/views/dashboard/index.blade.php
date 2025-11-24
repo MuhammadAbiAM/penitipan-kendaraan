@@ -92,7 +92,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
-            // --- FUNGSI UTAMA UNTUK MENGAMBIL KONTEKS CANVAS ---
             function createChart(elementId, chartConfig) {
                 const canvas = document.getElementById(elementId);
                 if (canvas) {
@@ -106,7 +105,6 @@
                     console.error('Canvas element not found for ID:', elementId);
                 }
             }
-            // ----------------------------------------------------
 
 
             // --- GRAFIK MINGGUAN ---
