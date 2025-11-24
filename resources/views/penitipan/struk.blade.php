@@ -37,7 +37,6 @@
         .sub-title {
             font-size: 13px;
             margin-top: 4px;
-            margin-bottom: 15px;
         }
 
         .info-row {
@@ -105,8 +104,8 @@
         <div class="header">
             <h2>PELABUHAN SDP</h2>
             <h2>DINAS PERHUBUNGAN</h2>
-            <h2>KABUPATEN CILACAP</h2>
-            <div class="sub-title">Struk Penitipan Kendaraan</div>
+            <div class="sub-title">Jl. Jend. Sudirman No.99, Gobok, Donan, Kec. Cilacap Tengah</div>
+            <div class="sub-title">(0282) 535356</div>
         </div>
 
         <div class="divider">----------------------------------------------</div>
@@ -115,13 +114,11 @@
             <div class="left">
 
                 <p class="info-row">
-                    <span><strong>Tanggal:</strong></span>
-                    <span>{{ now()->format('d-m-Y H:i') }}</span>
                 </p>
 
                 @if ($penitipan->user)
                     <p class="info-row">
-                        <span><strong>Petugas:</strong></span>
+                        <span>{{ now()->format('d-m-Y H:i') }}</span>
                         <span>{{ $penitipan->user->username }}</span>
                     </p>
                 @endif
@@ -133,15 +130,15 @@
         <div class="row">
             <div class="left">
                 <p class="info-row">
-                    <span><strong>Plat Nomor:</strong></span>
+                    <span><strong>Plat Nomor</strong></span>
                     <span>{{ $penitipan->plat_nomor }}</span>
                 </p>
                 <p class="info-row">
-                    <span><strong>Waktu Masuk:</strong></span>
+                    <span><strong>Waktu Masuk</strong></span>
                     <span>{{ $penitipan->waktu_masuk ? \Carbon\Carbon::parse($penitipan->waktu_masuk)->format('d-m-Y H:i') : '-' }}</span>
                 </p>
                 <p class="info-row">
-                    <span><strong>Waktu Keluar:</strong></span>
+                    <span><strong>Waktu Keluar</strong></span>
                     <span>
                         @if ($penitipan->waktu_keluar)
                             {{ \Carbon\Carbon::parse($penitipan->waktu_keluar)->format('d-m-Y H:i') }}
@@ -151,7 +148,7 @@
                     </span>
                 </p>
                 <div class="info-row">
-                    <strong>Total Bayar:</strong>
+                    <strong>Total Bayar</strong>
                     <span>
                         @if ($penitipan->status == 'selesai' && $penitipan->total_biaya)
                             Rp {{ number_format($penitipan->total_biaya, 0, ',', '.') }}
