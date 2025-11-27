@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container">
-        <h3 class="fw-bold mb-1 fs-3">Daftar Penitipan Motor</h3>
+        <h3 class="fw-bold mb-1 fs-3">Daftar Penitipan</h3>
         <p class="text-muted mb-3">{{ now()->translatedFormat('d F Y') }}</p>
 
         {{-- Form Input Langsung --}}
@@ -44,7 +44,8 @@
                 <form method="GET" action="{{ route('penitipan.index') }}" class="d-flex gap-2 align-items-end">
                     <div class="d-flex align-items-center">
                         <label class="me-1 fw-semibold text-muted">Show</label>
-                        <select name="show" class="form-select form-select-sm rounded-3 shadow-sm" onchange="this.form.submit()">
+                        <select name="show" class="form-select form-select-sm rounded-3 shadow-sm"
+                            onchange="this.form.submit()">
                             <option value="10" {{ $show == 10 ? 'selected' : '' }}>10</option>
                             <option value="25" {{ $show == 25 ? 'selected' : '' }}>25</option>
                             <option value="50" {{ $show == 50 ? 'selected' : '' }}>50</option>
@@ -52,7 +53,8 @@
                     </div>
 
                     <div>
-                        <select name="sort" class="form-select form-select-sm rounded-3 shadow-sm" onchange="this.form.submit()">
+                        <select name="sort" class="form-select form-select-sm rounded-3 shadow-sm"
+                            onchange="this.form.submit()">
                             <option value="desc" {{ $sort == 'desc' ? 'selected' : '' }}>Terbaru</option>
                             <option value="asc" {{ $sort == 'asc' ? 'selected' : '' }}>Terlama</option>
                         </select>
@@ -124,11 +126,11 @@
                                                 <i class="fas fa-sign-out-alt"></i>
                                             </button>
                                         </form>
-                                    @else
-                                        <a href="{{ route('penitipan.struk', $p->id) }}" target="_blank"
-                                            class="btn btn-outline-info btn-sm rounded-circle" title="Cetak Struk">
+                                    {{-- @else
+                                        <a href="#" class="btn btn-outline-info btn-sm rounded-circle"
+                                            title="Cetak Struk (Coming Soon!!)">
                                             <i class="fas fa-print"></i>
-                                        </a>
+                                        </a> --}}
                                     @endif
 
                                     <a href="{{ route('penitipan.show', $p->id) }}"

@@ -33,7 +33,6 @@ Route::middleware('auth')->group(function () {
             Route::put('/{id}', [PenitipanController::class, 'update'])->name('update');
             Route::delete('/{id}', [PenitipanController::class, 'destroy'])->name('destroy');
             Route::post('/{id}/keluar', [PenitipanController::class, 'keluar'])->name('keluar');
-            Route::get('/struk/{id}', [PenitipanController::class, 'struk'])->name('struk');
         });
 
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');

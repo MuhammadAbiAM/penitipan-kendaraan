@@ -16,12 +16,6 @@ return new class extends Migration {
             $table->dateTime('waktu_keluar')->nullable();
             $table->decimal('total_biaya', 10, 2)->nullable();
             $table->enum('status', ['aktif', 'selesai'])->default('aktif');
-            $table->string('kode_struk')->unique();
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')
-                ->references('id')
-                ->on('users')
-                ->onDelete('set null');
         });
     }
 

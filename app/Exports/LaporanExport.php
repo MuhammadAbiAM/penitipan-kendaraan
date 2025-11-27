@@ -10,8 +10,7 @@ class LaporanExport implements FromCollection, WithHeadings
 {
     public function collection()
     {
-        return Penitipan::own()
-            ->select('plat_nomor', 'merek', 'warna', 'waktu_masuk', 'waktu_keluar', 'total_biaya', 'status')
+        return Penitipan::select('plat_nomor', 'merek', 'warna', 'waktu_masuk', 'waktu_keluar', 'total_biaya', 'status')
             ->get();
     }
 

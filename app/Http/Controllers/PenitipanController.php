@@ -3,32 +3,26 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Penitipan;
 use Carbon\Carbon;
 
 class PenitipanController extends Controller
 {
-
     private function normalizePlate($input)
     {
-        // Hilangkan semua spasi
         $clean = preg_replace('/\s+/', '', strtoupper($input));
 
-        // Pisahkan huruf-angka-huruf
         preg_match('/^([A-Z]{1,2})(\d{1,4})([A-Z]{1,3})$/', $clean, $parts);
 
         if (!$parts) {
-            // Jika tidak cocok pola, tetap kembalikan uppercase original
             return strtoupper($input);
         }
 
-        $prefix = $parts[1];  // huruf depan
-        $number = $parts[2];  // angka
-        $suffix = $parts[3];  // huruf belakang
+        $prefix = $parts[1];
+        $number = $parts[2];
+        $suffix = $parts[3];
 
-        // Format resmi misal "R 1234 AB"
         return "{$prefix} {$number} {$suffix}";
     }
 
@@ -77,13 +71,10 @@ class PenitipanController extends Controller
             ->exists();
 
         if ($sudahAda) {
-            return redirect()->back()
+            return back()
                 ->withErrors(['plat_nomor' => 'Plat nomor ini sudah terdaftar dan masih aktif!'])
                 ->withInput();
         }
-
-        $nextId = Penitipan::max('id') + 1;
-        $kodeStruk = 'SDP' . str_pad($nextId, 3, '0', STR_PAD_LEFT);
 
         Penitipan::create([
             'plat_nomor'    => $plat,
@@ -91,8 +82,6 @@ class PenitipanController extends Controller
             'warna'         => $request->warna,
             'waktu_masuk'   => now(),
             'status'        => 'aktif',
-            'kode_struk'    => $kodeStruk,
-            'user_id'       => Auth::id(),
         ]);
 
         return redirect()->route('penitipan.index')
@@ -127,7 +116,7 @@ class PenitipanController extends Controller
             ->exists();
 
         if ($duplikat) {
-            return redirect()->back()
+            return back()
                 ->withErrors(['plat_nomor' => 'Plat nomor ini sudah digunakan kendaraan aktif lain!'])
                 ->withInput();
         }
@@ -157,8 +146,11 @@ class PenitipanController extends Controller
 
         $waktuMasuk = Carbon::parse($penitipan->waktu_masuk);
         $waktuKeluar = Carbon::now();
+
         $durasiHari = $waktuMasuk->diffInDays($waktuKeluar);
-        if ($durasiHari == 0) $durasiHari = 1;
+        if ($durasiHari == 0) {
+            $durasiHari = 1;
+        }
 
         $tarif = 3000;
         $biaya = $durasiHari * $tarif;
@@ -171,11 +163,5 @@ class PenitipanController extends Controller
 
         return redirect()->route('penitipan.index')
             ->with('success', 'Kendaraan sudah keluar!');
-    }
-
-    public function struk($id)
-    {
-        $penitipan = Penitipan::findOrFail($id);
-        return view('penitipan.struk', compact('penitipan'));
     }
 }

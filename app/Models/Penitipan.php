@@ -19,20 +19,5 @@ class Penitipan extends Model
         'waktu_keluar',
         'total_biaya',
         'status',
-        'kode_struk',
-        'user_id'
     ];
-
-    public function scopeOwn($query)
-    {
-        if (Auth::check() && Auth::user()->isAdmin()) {
-            return $query;
-        }
-        return $query->where('user_id', Auth::id());
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
 }
