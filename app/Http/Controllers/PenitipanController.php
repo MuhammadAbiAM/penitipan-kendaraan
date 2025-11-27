@@ -28,7 +28,7 @@ class PenitipanController extends Controller
         $number = $parts[2];  // angka
         $suffix = $parts[3];  // huruf belakang
 
-        // Format resmi: "R 1234 AB"
+        // Format resmi misal "R 1234 AB"
         return "{$prefix} {$number} {$suffix}";
     }
 
