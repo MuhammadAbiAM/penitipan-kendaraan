@@ -37,7 +37,7 @@
 
         {{-- Tabel Data --}}
         @if ($penitipan->isEmpty())
-            <div class="alert alert-info shadow-sm rounded-3 text-center">Belum ada data penitipan motor.</div>
+            <div class="alert alert-info shadow-sm rounded-3 text-center">Belum ada data penitipan.</div>
         @else
             {{-- Filter & Search --}}
             <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
@@ -126,11 +126,6 @@
                                                 <i class="fas fa-sign-out-alt"></i>
                                             </button>
                                         </form>
-                                    {{-- @else
-                                        <a href="#" class="btn btn-outline-info btn-sm rounded-circle"
-                                            title="Cetak Struk (Coming Soon!!)">
-                                            <i class="fas fa-print"></i>
-                                        </a> --}}
                                     @endif
 
                                     <a href="{{ route('penitipan.show', $p->id) }}"
