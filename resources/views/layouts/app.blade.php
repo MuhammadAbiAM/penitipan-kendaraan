@@ -22,7 +22,7 @@
             left: 0;
             height: 100vh;
             width: 250px;
-            background: #3f51b5;
+            background: #454A96;
             color: #fff;
             padding: 20px 15px;
             border-top-right-radius: 25px;
@@ -63,7 +63,7 @@
         .sidebar a:hover,
         .sidebar a.active {
             background: #fff;
-            color: #3f51b5;
+            color: #454A96;
             font-weight: 500;
         }
 

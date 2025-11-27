@@ -20,7 +20,7 @@
         }
 
         .left-side {
-            background-color: #3b358b;
+            background-color: #454A96;
             font-size: 18px;
             color: white;
             flex: 1;
@@ -57,7 +57,7 @@
         }
 
         .btn-primary {
-            background-color: #3b358b;
+            background-color: #454A96;
             border: none;
         }
 
@@ -66,12 +66,12 @@
         }
 
         .btn-outline-primary {
-            border-color: #3b358b;
-            color: #3b358b;
+            border-color: #454A96;
+            color: #454A96;
         }
 
         .btn-outline-primary:hover {
-            background-color: #3b358b;
+            background-color: #454A96;
             color: white;
         }
 

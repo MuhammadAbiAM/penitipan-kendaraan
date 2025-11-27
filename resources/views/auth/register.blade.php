@@ -20,7 +20,7 @@
         }
 
         .left-side {
-            background-color: #3f51b5;
+            background-color: #454A96;
             font-size: 18px;
             color: white;
             flex: 1;
@@ -57,7 +57,7 @@
         }
 
         .btn-primary {
-            background-color: #3f51b5;
+            background-color: #454A96;
             border: none;
         }
 
@@ -71,7 +71,7 @@
             gap: 10px;
             font-weight: bold;
             font-size: 20px;
-            color: #3f51b5;
+            color: #454A96;
         }
 
         .badge-petugas {
