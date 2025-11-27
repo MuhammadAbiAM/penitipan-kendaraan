@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('penitipan', function (Blueprint $table) {
             $table->id();
-            $table->string('plat_nomor')->unique();
+            $table->string('plat_nomor');
             $table->string('merek')->nullable();
             $table->string('warna')->nullable();
             $table->dateTime('waktu_masuk')->default(now());

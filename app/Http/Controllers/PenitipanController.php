@@ -10,6 +10,28 @@ use Carbon\Carbon;
 
 class PenitipanController extends Controller
 {
+
+    private function normalizePlate($input)
+    {
+        // Hilangkan semua spasi
+        $clean = preg_replace('/\s+/', '', strtoupper($input));
+
+        // Pisahkan huruf-angka-huruf
+        preg_match('/^([A-Z]{1,2})(\d{1,4})([A-Z]{1,3})$/', $clean, $parts);
+
+        if (!$parts) {
+            // Jika tidak cocok pola, tetap kembalikan uppercase original
+            return strtoupper($input);
+        }
+
+        $prefix = $parts[1];  // huruf depan
+        $number = $parts[2];  // angka
+        $suffix = $parts[3];  // huruf belakang
+
+        // Format resmi: "R 1234 AB"
+        return "{$prefix} {$number} {$suffix}";
+    }
+
     public function index(Request $request)
     {
         $show = $request->input('show', 10);
@@ -43,12 +65,12 @@ class PenitipanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'plat_nomor' => 'required|string|max:20',
+            'plat_nomor' => 'required|string|max:10',
             'merek'      => 'nullable|string|max:50',
             'warna'      => 'nullable|string|max:30',
         ]);
 
-        $plat = strtoupper($request->plat_nomor);
+        $plat = $this->normalizePlate($request->plat_nomor);
 
         $sudahAda = Penitipan::where('plat_nomor', $plat)
             ->where('status', 'aktif')
@@ -92,14 +114,13 @@ class PenitipanController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'plat_nomor' => 'required|string|max:20',
+            'plat_nomor' => 'required|string|max:10',
             'merek' => 'nullable|string|max:50',
             'warna' => 'nullable|string|max:30',
         ]);
 
-        $penitipan = Penitipan::findOrFail($id);
+        $plat = $this->normalizePlate($request->plat_nomor);
 
-        $plat = strtoupper($request->plat_nomor);
         $duplikat = Penitipan::where('plat_nomor', $plat)
             ->where('status', 'aktif')
             ->where('id', '!=', $id)
@@ -110,6 +131,8 @@ class PenitipanController extends Controller
                 ->withErrors(['plat_nomor' => 'Plat nomor ini sudah digunakan kendaraan aktif lain!'])
                 ->withInput();
         }
+
+        $penitipan = Penitipan::findOrFail($id);
 
         $penitipan->update([
             'plat_nomor' => $plat,
