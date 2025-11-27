@@ -23,12 +23,12 @@
                 <input type="text" name="warna" class="form-control" value="{{ $penitipan->warna }}">
             </div>
 
-            <a href="{{ route('penitipan.index') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Batal
-            </a>
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-save"></i> Update
             </button>
+            <a href="{{ route('penitipan.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Batal
+            </a>
         </form>
     </div>
 @endsection
