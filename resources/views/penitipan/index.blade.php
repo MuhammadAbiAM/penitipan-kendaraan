@@ -61,19 +61,32 @@
                     </div>
                 </form>
 
-                {{-- Search modern --}}
-                <form method="GET" action="{{ route('penitipan.index') }}" class="w-full max-w-xs">
-                    <div class="flex items-center bg-gray-100 rounded-full h-10 px-4 shadow-inner">
-                        <svg class="w-4 h-4 text-indigo-600 mr-2" fill="none" stroke="currentColor" stroke-width="2"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z" />
-                        </svg>
+                {{-- Search --}}
+                <form method="GET" action="{{ route('penitipan.index') }}" class="d-flex align-items-center gap-2"
+                    style="max-width: 350px;">
 
-                        <input type="text" name="search" placeholder="Cari" value="{{ request('search') }}"
-                            class="w-full bg-transparent focus:outline-none text-indigo-700 placeholder-indigo-400">
+                    <input type="hidden" name="show" value="{{ request('show', $show) }}">
+                    <input type="hidden" name="sort" value="{{ request('sort', $sort) }}">
+
+                    <div class="position-relative flex-grow-1">
+                        <i class="fas fa-search position-absolute top-50 start-3 translate-middle-y text-muted"></i>
+
+                        <input type="text" name="search" class="form-control ps-5 rounded-pill"
+                            placeholder="Cari data..." value="{{ request('search') }}">
                     </div>
+
+                    <button class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
+                        style="width: 40px; height: 40px;">
+                        <i class="fas fa-search"></i>
+                    </button>
+
                 </form>
+
+                <style>
+                    .start-3 {
+                        left: 12px;
+                    }
+                </style>
             </div>
 
             {{-- Table --}}
@@ -150,7 +163,6 @@
                                 </td>
                             </tr>
                         @endforeach
-                        <script src="https://cdn.tailwindcss.com"></script>
                         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
                         <script>
