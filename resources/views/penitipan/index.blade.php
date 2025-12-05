@@ -72,7 +72,7 @@
                         <i class="fas fa-search position-absolute top-50 start-3 translate-middle-y text-muted"></i>
 
                         <input type="text" name="search" class="form-control ps-5 rounded-pill"
-                            placeholder="Cari data..." value="{{ request('search') }}">
+                            placeholder="Cari..." value="{{ request('search') }}">
                     </div>
 
                     <button class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
